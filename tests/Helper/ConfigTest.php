@@ -32,6 +32,7 @@ final class ConfigTest extends TestCase {
     $this->assertArrayHasKey( 'apmVersion', $config );
     $this->assertArrayHasKey( 'appVersion', $config );
     $this->assertArrayHasKey( 'env', $config );
+    $this->assertArrayHasKey( 'truncate', $config );
 
     $this->assertEquals( $config['appName'], $appName );
     $this->assertNull( $config['secretToken'] );
@@ -41,6 +42,7 @@ final class ConfigTest extends TestCase {
     $this->assertEquals( $config['timeout'], 5 );
     $this->assertEquals( $config['apmVersion'], 'v1' );
     $this->assertEquals( $config['env'], [] );
+    $this->assertEquals( $config['truncate'], Config::ELASTIC_KEYWORD_MAX_LENGTH_DEFAULT );
   }
 
   /**
@@ -61,6 +63,7 @@ final class ConfigTest extends TestCase {
       'timeout'       => rand( 10, 20 ),
       'hostname'      => sprintf( 'host_%d', rand( 0, 9 ) ),
       'active'        => false,
+      'truncate'      => 2048
     ];
 
     $agent = new Agent( $init );

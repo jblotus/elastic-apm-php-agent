@@ -44,6 +44,8 @@ class EventBean
         'user'     => [],
         'custom'   => [],
         'tags'     => [],
+        'env'      => [],
+        'truncate' => null,
         'response' => [
             'finished'     => true,
             'headers_sent' => true,
@@ -196,20 +198,20 @@ class EventBean
         $SERVER_PROTOCOL = $_SERVER['SERVER_PROTOCOL'] ?? '';
         $context         = [
             'request' => [
-                'http_version' => substr($SERVER_PROTOCOL, strpos($SERVER_PROTOCOL, '/')),
-                'method'       => $_SERVER['REQUEST_METHOD'] ?? 'cli',
+                'http_version' => $this->truncateKeyword(substr($SERVER_PROTOCOL, strpos($SERVER_PROTOCOL, '/'))),
+                'method'       => $this->truncateKeyword($_SERVER['REQUEST_METHOD'] ?? 'cli'),
                 'socket'       => [
                     'remote_address' => $_SERVER['REMOTE_ADDR'] ?? '',
                     'encrypted'      => isset($_SERVER['HTTPS'])
                 ],
                 'response' => $this->contexts['response'],
                 'url'          => [
-                    'protocol' => $http_or_https,
-                    'hostname' => $_SERVER['SERVER_NAME'] ?? '',
-                    'port'     => $_SERVER['SERVER_PORT'] ?? '',
-                    'pathname' => $_SERVER['SCRIPT_NAME'] ?? '',
-                    'search'   => '?' . (($_SERVER['QUERY_STRING'] ?? '') ?? ''),
-                    'full' => $http_or_https . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
+                    'protocol' => $this->truncateKeyword($http_or_https),
+                    'hostname' => $this->truncateKeyword($_SERVER['SERVER_NAME'] ?? ''),
+                    'port'     => $this->truncateKeyword($_SERVER['SERVER_PORT'] ?? ''),
+                    'pathname' => $this->truncateKeyword($_SERVER['SCRIPT_NAME'] ?? ''),
+                    'search'   => $this->truncateKeyword('?' . (($_SERVER['QUERY_STRING'] ?? '') ?? '')),
+                    'full'     => $this->truncateKeyword($http_or_https . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'])
                 ],
                 'headers' => [
                     'user-agent' => $headers['User-Agent'] ?? '',
@@ -240,5 +242,10 @@ class EventBean
         }
 
         return $context;
+    }
+
+    protected function truncateKeyword(string $string): string
+    {
+        return substr($string, 0, $this->contexts['truncate']);
     }
 }

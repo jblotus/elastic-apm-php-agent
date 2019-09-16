@@ -11,6 +11,7 @@ use PhilKra\Exception\MissingAppNameException;
  */
 class Config
 {
+    const ELASTIC_KEYWORD_MAX_LENGTH_DEFAULT = 1024;
     /**
      * Config Set
      *
@@ -69,6 +70,11 @@ class Config
             'timeout'     => 5,
             'apmVersion'  => 'v1',
             'env'         => [],
+            // elastic apm indexes certain fields as keywords which default to length 1024
+            // https://github.com/elastic/apm-server/issues/777#issuecomment-376517210
+            // see
+            // https://github.com/elastic/apm-server/blob/master/docs/spec/request.json
+            'truncate'    => self::ELASTIC_KEYWORD_MAX_LENGTH_DEFAULT
         ];
     }
 }
